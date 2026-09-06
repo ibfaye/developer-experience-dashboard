@@ -90,7 +90,7 @@ export default function Page() {
   return (
     <main className="app-shell">
       <aside className="sidebar">
-        <div className="brand"><div className="brand-mark"><span /><span /><span /></div><span>DevShipYard</span><sup>beta</sup></div>
+        <div className="brand"><div className="brand-mark"><span /><span /><span /></div><span>Dev ShipYard</span><sup>beta</sup></div>
         <div className="workspace-switcher"><div className="workspace-logo">C</div><div><strong>Core Platform</strong><small>Workspace</small></div><ChevronDown size={15} /></div>
         <nav className="side-nav" aria-label="Primary navigation">
           <span className="nav-label">Control plane</span>
