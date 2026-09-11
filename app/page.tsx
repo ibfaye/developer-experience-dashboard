@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import {
   Activity,
@@ -35,11 +37,11 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { label: 'Overview', icon: LayoutDashboard },
-  { label: 'Deployments', icon: Rocket, count: '12' },
-  { label: 'Builds', icon: TerminalSquare },
-  { label: 'Analytics', icon: Activity },
-  { label: 'Team', icon: Users },
+  { label: 'Overview', href: '/', icon: LayoutDashboard },
+  { label: 'Deployments', href: '/deployments', icon: Rocket, count: '12' },
+  { label: 'Builds', href: '/builds', icon: TerminalSquare },
+  { label: 'Analytics', href: '/analytics', icon: Activity },
+  { label: 'Team', href: '/team', icon: Users },
 ]
 
 const contributors = [
@@ -67,7 +69,8 @@ function MetricCard({ icon: Icon, label, value, change, positive = true, accent 
 }
 
 export default function Page() {
-  const [activeNav, setActiveNav] = useState('Overview')
+  const pathname = usePathname()
+  const activeNav = navItems.find((item) => item.href === pathname)?.label ?? 'Overview'
   const [range, setRange] = useState('7d')
   const [project, setProject] = useState('commerce-api')
   const [environment, setEnvironment] = useState('Production')
@@ -94,9 +97,9 @@ export default function Page() {
         <div className="workspace-switcher"><div className="workspace-logo">C</div><div><strong>Core Platform</strong><small>Workspace</small></div><ChevronDown size={15} /></div>
         <nav className="side-nav" aria-label="Primary navigation">
           <span className="nav-label">Control plane</span>
-          {navItems.map(({ label, icon: Icon, count }) => <button key={label} onClick={() => setActiveNav(label)} className={`nav-item ${activeNav === label ? 'active' : ''}`}><Icon size={17} /><span>{label}</span>{count && <em>{count}</em>}</button>)}
+          {navItems.map(({ label, href, icon: Icon, count }) => <Link key={label} href={href} className={`nav-item ${activeNav === label ? 'active' : ''}`}><Icon size={17} /><span>{label}</span>{count && <em>{count}</em>}</Link>)}
           <span className="nav-label nav-label-spaced">Manage</span>
-          <button className="nav-item"><Box size={17} /><span>Projects</span></button><button className="nav-item"><Settings2 size={17} /><span>Settings</span></button>
+          <Link href="/projects" className={`nav-item ${activeNav === 'Projects' ? 'active' : ''}`}><Box size={17} /><span>Projects</span></Link><Link href="/settings" className={`nav-item ${activeNav === 'Settings' ? 'active' : ''}`}><Settings2 size={17} /><span>Settings</span></Link>
         </nav>
         <div className="sidebar-bottom"><div className="pro-card"><Sparkles size={17} /><div><strong>Shipyard Pro</strong><p>Unlock faster builds</p></div><ArrowUpRight size={15} /></div><button className="help-link"><LifeBuoy size={16} />Help center <span>⌘K</span></button><div className="user-row"><div className="avatar avatar-blue">JC</div><div><strong>Jordan Chen</strong><small>jordan@shipyard.dev</small></div><MoreHorizontal size={16} /></div></div>
       </aside>
@@ -112,7 +115,7 @@ export default function Page() {
 
           <div className="primary-grid"><GlassCard className="throughput-card"><div className="card-heading"><div><div className="card-kicker"><span className="kicker-icon"><Zap size={13} /></span>Build throughput</div><h2>Deployments over time</h2></div><button className="icon-button"><MoreHorizontal size={17} /></button></div><div className="chart-legend"><span><i className="legend-builds" />Builds</span><span><i className="legend-deploys" />Deployments</span></div><div className="chart"><div className="y-axis"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div><div className="chart-area"><div className="grid-lines" /> <svg viewBox="0 0 800 240" preserveAspectRatio="none" aria-label="Build throughput chart"><defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#7c5cff" stopOpacity=".30" /><stop offset="100%" stopColor="#7c5cff" stopOpacity="0" /></linearGradient></defs><path d="M0 157 C35 140 45 150 70 127 S120 147 145 112 S190 128 220 94 S260 112 290 86 S330 100 360 70 S410 91 438 55 S480 83 510 44 S550 68 580 35 S620 68 650 30 S700 47 730 24 S770 40 800 13 V240 H0Z" fill="url(#area)" /><path d="M0 157 C35 140 45 150 70 127 S120 147 145 112 S190 128 220 94 S260 112 290 86 S330 100 360 70 S410 91 438 55 S480 83 510 44 S550 68 580 35 S620 68 650 30 S700 47 730 24 S770 40 800 13" fill="none" stroke="#8b72ff" strokeWidth="3" /><path d="M0 190 C42 173 50 180 83 165 S130 182 162 143 S210 155 240 134 S280 151 315 120 S360 138 395 109 S430 133 465 92 S505 115 540 85 S580 110 618 68 S660 96 690 55 S740 86 800 42" fill="none" stroke="#39d8e6" strokeWidth="2" strokeDasharray="7 7" opacity=".9" /></svg><div className="x-axis"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></div></div></GlassCard><GlassCard className="pipeline-card"><div className="card-heading"><div><div className="card-kicker"><span className="kicker-icon cyan-bg"><GitPullRequest size={13} /></span>Pipeline health</div><h2>Current deployments</h2></div><button className="icon-button"><MoreHorizontal size={17} /></button></div><div className="pipeline-list"><PipelineRow name="commerce-api" branch="main" status="Live" color="green" time="2m ago" /><PipelineRow name="dashboard-web" branch="feat/analytics" status="Building" color="purple" time="1m 12s" /><PipelineRow name="edge-worker" branch="hotfix/cache" status="Live" color="green" time="23m ago" /><PipelineRow name="marketing-site" branch="main" status="Failed" color="red" time="45m ago" /></div><button className="text-button" onClick={() => setActiveNav('Deployments')}>View all deployments <ArrowUpRight size={14} /></button></GlassCard></div>
 
-          <div className="secondary-grid"><GlassCard className="activity-card"><div className="card-heading"><div><div className="card-kicker"><span className="kicker-icon pink-bg"><GitCommitHorizontal size={13} /></span>Contributor activity</div><h2>Recent contributions</h2></div><button className="button mini secondary">Last 7 days <ChevronDown size={13} /></button></div><div className="contributor-list">{contributors.map(person => <div className="contributor" key={person.name}><div className={`avatar avatar-${person.tone}`}>{person.initials}</div><div className="contributor-main"><strong>{person.name}</strong><span>{person.detail}</span></div><div className="commit-meta"><span><GitBranch size={12} />{person.branch}</span><small>{person.time}</small></div></div>)}</div><button className="text-button" onClick={() => setActiveNav('Team')}>View contributor activity <ArrowUpRight size={14} /></button></GlassCard><GlassCard className="insight-card"><div className="insight-glow" /><div className="card-kicker"><span className="kicker-icon orange-bg"><ShieldCheck size={13} /></span>System insight</div><h2>Your fleet is<br /><span>operating smoothly.</span></h2><p>All production services are healthy. Build success rate is up and your team is shipping more frequently this week.</p><div className="health-score"><div className="score-ring"><strong>98</strong><small>/100</small></div><div><strong>Excellent health</strong><span>Across 4 projects</span></div></div><button className="button full secondary"><Activity size={15} />Open platform analytics</button></GlassCard></div>
+          <div className="secondary-grid"><GlassCard className="activity-card"><div className="card-heading"><div><div className="card-kicker"><span className="kicker-icon pink-bg"><GitCommitHorizontal size={13} /></span>Contributor activity</div><h2>Recent contributions</h2></div><button className="button mini secondary">Last 7 days <ChevronDown size={13} /></button></div><div className="contributor-list">{contributors.map(person => <div className="contributor" key={person.name}><div className={`avatar avatar-${person.tone}`}>{person.initials}</div><div className="contributor-main"><strong>{person.name}</strong><span>{person.detail}</span></div><div className="commit-meta"><span><GitBranch size={12} />{person.branch}</span><small>{person.time}</small></div></div>)}</div><button className="text-button" onClick={() => { window.location.href = '/team' }}>View contributor activity <ArrowUpRight size={14} /></button></GlassCard><GlassCard className="insight-card"><div className="insight-glow" /><div className="card-kicker"><span className="kicker-icon orange-bg"><ShieldCheck size={13} /></span>System insight</div><h2>Your fleet is<br /><span>operating smoothly.</span></h2><p>All production services are healthy. Build success rate is up and your team is shipping more frequently this week.</p><div className="health-score"><div className="score-ring"><strong>98</strong><small>/100</small></div><div><strong>Excellent health</strong><span>Across 4 projects</span></div></div><button className="button full secondary"><Activity size={15} />Open platform analytics</button></GlassCard></div>
           <footer><span>Shipyard control plane <b>•</b> All systems operational</span><span>API status <i className="pulse-dot" /></span></footer>
         </div>
       </div>
